@@ -78,6 +78,9 @@ def generate_routes(app,db):
         
         except Exception as e:
             return jsonify({"error":"Could not log out"}),400
+        
+    #TODO: create password route
+    #TODO: register route
 
 
 

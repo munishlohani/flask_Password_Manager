@@ -33,7 +33,7 @@ def create_app():
 
 
 
-    generate_routes()
+    generate_routes(app=app,db=db)
 
     migrate=Migrate(app=app,db=db)
 
