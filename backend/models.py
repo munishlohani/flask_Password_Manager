@@ -11,7 +11,7 @@ class Users(db.Model,UserMixin):
     username=db.Column(db.String(50),nullable=False,unique=True)
     email=db.Column(db.String(150),unique=True,nullable=False)
     password_hash=db.Column(db.String(128),nullable=False)
-    passwords=db.relationship('Password',backref='user',lazy=True)
+    passwords=db.relationship('Password',backref='user',lazy=True) # One to Many Relationship between User-Password.
 
 
     def set_password_hash(self,password):
@@ -20,7 +20,7 @@ class Users(db.Model,UserMixin):
     def check_password(self,password):
         return check_password_hash(self.password_hash,password)
 
-
+# Stores Password for Users. 
 class Password(db.Model,UserMixin):
     id=db.Column(db.Integer,primary_key=True)
     user_id=db.Column(db.Integer,db.ForeignKey('users.id'),nullable=False)
