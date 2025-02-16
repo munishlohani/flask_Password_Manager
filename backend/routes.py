@@ -9,8 +9,7 @@ def generate_routes(app,db):
     @app.route('/api/login', methods=['POST'])
     def login():
         try:
-            if not current_user.is_authenticated():
-                return jsonify({"error":"User is not Logged in"}),401
+
 
             data=request.json
 
@@ -42,8 +41,11 @@ def generate_routes(app,db):
     @login_required
 
     def dashboard():
+     
 
      try:
+        if not current_user.is_authenticated:
+            return jsonify({"error":"User is not Logged in"}),401
 
         passwords = [
             {
@@ -67,7 +69,7 @@ def generate_routes(app,db):
 
 
 
-    @app.route('/api/logout')
+    @app.route('/api/logout',methods=['POST'])
     @login_required
     def logout():
         try:
