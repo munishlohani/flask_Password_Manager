@@ -3,12 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from routes import generate_routes
+from flask_cors import CORS
 
 db=SQLAlchemy()
 
 def create_app():
     app=Flask(__name__)
+    cors=CORS(app=app,origins='*')
+    
     app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///./sqdb.db'
     app.config['SECRET_KEY']="secret_key"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
@@ -32,6 +34,7 @@ def create_app():
 
 
 
+    from routes import generate_routes
 
     generate_routes(app=app,db=db)
 

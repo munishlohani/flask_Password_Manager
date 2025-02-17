@@ -5,6 +5,37 @@ from flask import request,jsonify
 def generate_routes(app,db):
 
 
+    #register route
+    @app.route('/api/register',methods=['POST'])
+    def register():
+        try:
+            data=request.json
+            username=data['username']
+            email=data.get('email',None)
+            password=data['password']
+            password_again=data['password_again']
+
+            if password !=password_again:
+                return jsonify({"error":"Password is not correct"}),400
+            
+
+            existing_user=Users.query.filter_by(username=username).first()
+
+            if existing_user is not None:
+                return jsonify({"error":"User Already Exists"}),400
+            
+            user=Users(username=username,email=email)
+
+            user.set_password_hash(password=password)
+
+            db.session.add(user)
+            db.session.commit()
+            return jsonify({"message":"User Created Successfully"}),201
+
+        except Exception as e:
+            return jsonify({"error":str(e)}),500
+
+
     #login route 
     @app.route('/api/login', methods=['POST'])
     def login():
@@ -79,8 +110,8 @@ def generate_routes(app,db):
         except Exception as e:
             return jsonify({"error":"Could not log out"}),400
         
-    #TODO: create password route
-    #TODO: register route
+
+
 
 
 
