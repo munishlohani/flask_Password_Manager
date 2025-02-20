@@ -143,3 +143,24 @@ def generate_routes(app, db):
             return jsonify({"error": str(e)}), 500
         
     #TODO: delete route
+    @app.route('/api/dashboard/delete',methods=['DELETE'])
+    @login_required
+    def delete():
+        try:
+            data=request.json
+
+            password_id=data.get('password_id')
+            if not password_id:
+                return jsonify({"error":"Could not find ID"}),404
+            
+            db_password=Password.query.filter_by(
+                    user_id=current_user.id, id=password_id
+                ).first()
+            db.session.delete(db_password)
+            db.session.commit()
+
+            return jsonify({"message":"Password deleted successfully"}),200
+        except Exception as e:
+            return jsonify({"error":str(e)}),500
+
+        
