@@ -90,11 +90,44 @@ def generate_routes(app, db):
                     "passwords": passwords,
                     
                 }
-            )
+            ),200
 
         except Exception as e:
             return jsonify({"error": "An error occoured"}), 400
 
+
+    @app.route("/api/dashboard/search",methods=["GET"])
+    @login_required
+    def search():
+        search_query=request.json.get("search_query","")
+
+        results = Password.query.filter(
+                    (Password.user_id == current_user.id) & 
+                    ((Password.site_name.ilike(f"%{search_query}%")) | 
+                    (Password.site_url.ilike(f"%{search_query}%")))
+        ).all()
+
+        passwords = [
+                    {   "password_id": p.id,
+                        "site_name": p.site_name,
+                        "site_url": p.site_url,
+                        "site_password":decrypt_password(p.site_password),
+                    } for p in results
+                    ]
+
+        if passwords:
+            return jsonify(
+                {   
+
+                    "user_id": current_user.id,
+                    "user_name": current_user.username,
+                    "passwords": passwords,
+                    
+                }
+            ),200
+        else:
+            return jsonify({"message": "No matching passwords found"}), 404 
+        
     @app.route("/api/logout", methods=["POST"])
     @login_required
     def logout():
