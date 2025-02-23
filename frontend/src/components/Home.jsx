@@ -33,7 +33,6 @@ export default function Home() {
     setLoading(true);
     setError({ username: "", password: "", email: "", general: "" });
 
-    // Validate fields
     if (!username) {
       setError((prev) => ({ ...prev, username: "This is a required field." }));
       setLoading(false);
