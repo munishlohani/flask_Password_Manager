@@ -1,6 +1,6 @@
 from models import Users, Password
 from flask_login import login_user, current_user, login_required, logout_user
-from flask import request, jsonify
+from flask import request, jsonify,redirect
 from encryption import encrypt_password, decrypt_password
 
 
@@ -17,7 +17,10 @@ def generate_routes(app, db):
             password_again = data["password_again"]
 
             if not username or not email or not password:
-                return jsonify({"error":"Username, Password and Email is required "}),400
+                return (
+                    jsonify({"error": "Username, Password and Email is required "}),
+                    400,
+                )
 
             if password != password_again:
                 return jsonify({"error": "Password is not correct"}), 400
@@ -45,25 +48,31 @@ def generate_routes(app, db):
 
             data = request.json
 
-            username = data["username"]
-            email = data.get("email",None)
-            password = data["password"]
+            username = data.get("username")
+            email = data.get("email", None)
+            password = data.get("password")
 
             user = Users.query.filter(Users.username == username).first()
 
-            if user is not None:
+            if user is not None :
                 if user.check_password(password):
                     login_user(user)
+                    print(current_user)
                     return jsonify({"message": "Logged in successfully"}), 200
 
                 else:
+                    print(current_user)
+
                     return jsonify({"error": "Password is incorrect"}), 400
 
             else:
+                print(current_user)
                 return jsonify({"error": "User not Found"}), 404
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+        
+
 
     @app.route("/api/dashboard")
     @login_required
@@ -74,7 +83,8 @@ def generate_routes(app, db):
                 return jsonify({"error": "User is not Logged in"}), 401
 
             passwords = [
-                {   "password_id": p.id,
+                {
+                    "password_id": p.id,
                     "site_name": p.site_name,
                     "site_url": p.site_url,
                     "site_password": decrypt_password(p.site_password),
@@ -82,52 +92,57 @@ def generate_routes(app, db):
                 for p in current_user.passwords
             ]
 
-            return jsonify(
-                {   
-
-                    "user_id": current_user.id,
-                    "user_name": current_user.username,
-                    "passwords": passwords,
-                    
-                }
-            ),200
+            return (
+                jsonify(
+                    {
+                        "user_id": current_user.id,
+                        "user_name": current_user.username,
+                        "passwords": passwords,
+                    }
+                ),
+                200,
+            )
 
         except Exception as e:
             return jsonify({"error": "An error occoured"}), 400
 
-
-    @app.route("/api/dashboard/search",methods=["GET"])
+    @app.route("/api/dashboard/search", methods=["GET"])
     @login_required
     def search():
-        search_query=request.json.get("search_query","")
+        search_query = request.json.get("search_query", "")
 
         results = Password.query.filter(
-                    (Password.user_id == current_user.id) & 
-                    ((Password.site_name.ilike(f"%{search_query}%")) | 
-                    (Password.site_url.ilike(f"%{search_query}%")))
+            (Password.user_id == current_user.id)
+            & (
+                (Password.site_name.ilike(f"%{search_query}%"))
+                | (Password.site_url.ilike(f"%{search_query}%"))
+            )
         ).all()
 
         passwords = [
-                    {   "password_id": p.id,
-                        "site_name": p.site_name,
-                        "site_url": p.site_url,
-                        "site_password":decrypt_password(p.site_password),
-                    } for p in results
-                    ]
+            {
+                "password_id": p.id,
+                "site_name": p.site_name,
+                "site_url": p.site_url,
+                "site_password": decrypt_password(p.site_password),
+            }
+            for p in results
+        ]
 
         if passwords:
-            return jsonify(
-                {   
-
-                    "user_id": current_user.id,
-                    "user_name": current_user.username,
-                    "passwords": passwords,
-                    
-                }
-            ),200
+            return (
+                jsonify(
+                    {
+                        "user_id": current_user.id,
+                        "user_name": current_user.username,
+                        "passwords": passwords,
+                    }
+                ),
+                200,
+            )
         else:
-            return jsonify({"message": "No matching passwords found"}), 404 
-        
+            return jsonify({"message": "No matching passwords found"}), 404
+
     @app.route("/api/logout", methods=["POST"])
     @login_required
     def logout():
@@ -174,26 +189,24 @@ def generate_routes(app, db):
             return jsonify({"message": "Password added successfully"}), 201
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        
-    #TODO: delete route
-    @app.route('/api/dashboard/delete',methods=['DELETE'])
+
+    # TODO: delete route
+    @app.route("/api/dashboard/delete", methods=["DELETE"])
     @login_required
     def delete():
         try:
-            data=request.json
+            data = request.json
 
-            password_id=data.get('password_id')
+            password_id = data.get("password_id")
             if not password_id:
-                return jsonify({"error":"Could not find ID"}),404
-            
-            db_password=Password.query.filter_by(
-                    user_id=current_user.id, id=password_id
-                ).first()
+                return jsonify({"error": "Could not find ID"}), 404
+
+            db_password = Password.query.filter_by(
+                user_id=current_user.id, id=password_id
+            ).first()
             db.session.delete(db_password)
             db.session.commit()
 
-            return jsonify({"message":"Password deleted successfully"}),200
+            return jsonify({"message": "Password deleted successfully"}), 200
         except Exception as e:
-            return jsonify({"error":str(e)}),500
-
-        
+            return jsonify({"error": str(e)}), 500

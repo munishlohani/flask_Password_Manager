@@ -11,12 +11,12 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    cors = CORS(app=app, origins="*")
+    CORS(app=app, origins="http://localhost:5173", supports_credentials=True)
 
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///./sqdb.db"
     app.config["SECRET_KEY"] = "secret_key"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config['PERMANENT_SESSION_TIME']=timedelta(minutes=30)
+    app.config['PERMANENT_SESSION_LIFETIME']=timedelta(minutes=1)
 
     db.init_app(app=app)
     login_manager = LoginManager()

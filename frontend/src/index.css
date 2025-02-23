@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+#root{
+    background-color: rgb(24, 24, 27);
+    color: white;
+    font-family:  monospace,Courier ,'Courier New';
+}
