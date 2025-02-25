@@ -190,7 +190,6 @@ def generate_routes(app, db):
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
-    # TODO: delete route
     @app.route("/api/dashboard/delete", methods=["DELETE"])
     @login_required
     def delete():
