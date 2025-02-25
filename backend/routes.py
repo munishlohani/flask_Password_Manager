@@ -190,15 +190,10 @@ def generate_routes(app, db):
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
-    @app.route("/api/dashboard/delete", methods=["DELETE"])
+    @app.route("/api/dashboard/delete/<password_id>", methods=["DELETE"])
     @login_required
-    def delete():
+    def delete(password_id):
         try:
-            data = request.json
-
-            password_id = data.get("password_id")
-            if not password_id:
-                return jsonify({"error": "Could not find ID"}), 404
 
             db_password = Password.query.filter_by(
                 user_id=current_user.id, id=password_id
