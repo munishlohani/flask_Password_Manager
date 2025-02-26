@@ -46,21 +46,20 @@ export default function TableRow({
     );
   };
 
+  let password_hash = "";
 
-
-  let password_hash="";
-
-  for(let i=0;i<String(site_password).length;i++){
-      password_hash+="*"
+  for (let i = 0; i < String(site_password).length; i++) {
+    password_hash += "*";
   }
-
 
   return (
     <>
-      <div className="text-white flex gap-3 p-2 border-x-1 w-full md:relative rounded-sm absolute  border-zinc-700 justify-evenly text-left text-sm md:text-xl h-full invisible md:visible shadow-white/40 shadow-sm ">
+      <div className="text-white flex gap-3 p-2  w-full md:relative rounded-sm absolute   justify-evenly text-left text-sm md:text-xl h-full invisible md:visible  ">
         <h4 className="w-1/4">{site_name}</h4>
         <div className="password relative w-1/4">
-          <h4 className="w-1/4">{type=="password"?password_hash :site_password}</h4>
+          <h4 className="w-1/4">
+            {type == "password" ? password_hash : site_password}
+          </h4>
           <span
             className="flex items-center top-1 absolute right-1"
             onClick={handleEye}
@@ -103,15 +102,18 @@ export default function TableRow({
               : "max-h-0 overflow-hidden  opacity-0"
           }`}
         >
-        <div className="password relative w-1/4 flex items-center">
-          <h4 className="w-1/2">{type=="password"?password_hash :site_password}</h4>
-          <span
-            className="flex items-center top-0 absolute right-1"
-            onClick={handleEye}
-          >
-            {icon}
-          </span>
-        </div>        </div>
+          <div className="password relative w-1/3 flex items-center gap-3 justify-between">
+            <h4 className="w-1/2">
+              {type == "password" ? password_hash : site_password}
+            </h4>
+            <span
+              className="flex items-center top-0 absolute right-2 mx-1"
+              onClick={handleEye}
+            >
+              {icon}
+            </span>
+          </div>{" "}
+        </div>
       </div>
     </>
   );

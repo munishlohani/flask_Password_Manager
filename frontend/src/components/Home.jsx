@@ -9,7 +9,12 @@ export default function Home() {
   const [type, setType] = useState("password");
   const [username, setUser] = useState("");
   const [email, setEmail] = useState("");
-  const [error, setError] = useState({ username: "", password: "", email: "", general: "" });
+  const [error, setError] = useState({
+    username: "",
+    password: "",
+    email: "",
+    general: "",
+  });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -17,7 +22,7 @@ export default function Home() {
     if (error.general) {
       const timer = setTimeout(() => {
         setError((prev) => ({ ...prev, general: "" }));
-      }, 5000); 
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
@@ -25,7 +30,13 @@ export default function Home() {
 
   const handleEye = () => {
     setType((prev) => (prev === "password" ? "text" : "password"));
-    setIcon((prev) => (prev.type === AiFillEyeInvisible ? <AiFillEye size={"1.5em"} /> : <AiFillEyeInvisible size={"1.5em"} />));
+    setIcon((prev) =>
+      prev.type === AiFillEyeInvisible ? (
+        <AiFillEye size={"1.5em"} />
+      ) : (
+        <AiFillEyeInvisible size={"1.5em"} />
+      )
+    );
   };
 
   const handleLogin = async (e) => {
@@ -43,10 +54,12 @@ export default function Home() {
       setLoading(false);
       return;
     }
-    if(email!==""){
-
+    if (email !== "") {
       if (!validateEmail(email)) {
-        setError((prev) => ({ ...prev, email: "Please enter a valid email address." }));
+        setError((prev) => ({
+          ...prev,
+          email: "Please enter a valid email address.",
+        }));
         setLoading(false);
         return;
       }
@@ -75,22 +88,36 @@ export default function Home() {
 
   return (
     <div className="page w-full h-screen flex flex-col justify-center items-center">
-      <div className="logo text-white absolute top-[2vh] left-[12vw] m-2">Password Manager</div>
+      <div className="logo text-white absolute top-[2vh] left-[12vw] m-2">
+        Password Manager
+      </div>
 
       {/* Error Popup */}
-      <div className={`transition-opacity duration-300 absolute w-[20vw] h-[5vh] bg-red-500/60 top-3 rounded-sm p-2 ${error.general ? "opacity-100" : "opacity-0 invisible"}`}>
+      <div
+        className={`transition-opacity duration-300 absolute w-[20vw] h-[5vh] bg-red-500/60 top-3 rounded-sm p-2 ${
+          error.general ? "opacity-100" : "opacity-0 invisible"
+        }`}
+      >
         <h4>{error.general}</h4>
       </div>
 
       <div className="flex justify-center items-center">
         <div className="box w-[75vw] h-[50vh] md:w-[500px] md:h-[350px] bg-zinc-800 rounded-xl border-[0.5px] border-neutral-700 p-3 flex flex-col gap-4">
-          <h3 className="ml-2 text-lg md:text-xl font-semibold font-mono">Welcome Back</h3>
+          <h3 className="ml-2 text-lg md:text-xl font-semibold font-mono">
+            Welcome Back
+          </h3>
 
           <div className="form ml-2">
             <form onSubmit={handleLogin} className="select-none">
               <div className="username flex gap-2 items-center">
-                <span className="block text-zinc-400 my-1 mb-2 bg-zinc-800">Username</span>
-                <span className={`block text-red-400 my-1 mb-2 font-normal text-sm ${error.username ? "visible" : "invisible"}`}>
+                <span className="block text-zinc-400 my-1 mb-2 bg-zinc-800">
+                  Username
+                </span>
+                <span
+                  className={`block text-red-400 my-1 mb-2 font-normal text-sm ${
+                    error.username ? "visible" : "invisible"
+                  }`}
+                >
                   {error.username}
                 </span>
               </div>
@@ -104,8 +131,14 @@ export default function Home() {
               />
 
               <div className="email flex gap-2 items-center">
-                <span className="block text-zinc-400 my-1 mb-2 bg-zinc-800">Email</span>
-                <span className={`block text-red-400 my-1 mb-2 font-normal text-sm ${error.email ? "visible" : "invisible"}`}>
+                <span className="block text-zinc-400 my-1 mb-2 bg-zinc-800">
+                  Email
+                </span>
+                <span
+                  className={`block text-red-400 my-1 mb-2 font-normal text-sm ${
+                    error.email ? "visible" : "invisible"
+                  }`}
+                >
                   {error.email}
                 </span>
               </div>
@@ -119,8 +152,14 @@ export default function Home() {
               />
 
               <div className="password flex gap-2 items-center">
-                <span className="block text-zinc-400 my-1 mb-2 bg-zinc-800">Password</span>
-                <span className={`block text-red-400 my-1 mb-2 font-normal text-sm ${error.password ? "visible" : "invisible"}`}>
+                <span className="block text-zinc-400 my-1 mb-2 bg-zinc-800">
+                  Password
+                </span>
+                <span
+                  className={`block text-red-400 my-1 mb-2 font-normal text-sm ${
+                    error.password ? "visible" : "invisible"
+                  }`}
+                >
                   {error.password}
                 </span>
               </div>
@@ -133,7 +172,10 @@ export default function Home() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <span className="flex items-center absolute right-2 top-0.5" onClick={handleEye}>
+                <span
+                  className="flex items-center absolute right-2 top-0.5"
+                  onClick={handleEye}
+                >
                   {icon}
                 </span>
               </div>
@@ -146,6 +188,7 @@ export default function Home() {
                 {loading ? "Logging in..." : "Submit"}
               </button>
             </form>
+            <a href="/" className="underline text-blue-600">Dont Have an Account? Create One! </a>
           </div>
         </div>
       </div>
