@@ -3,8 +3,10 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 
-export default function Home() {
+export default function Create() {
   const [password, setPassword] = useState("");
+  const [password_again, setPasswordAgain] = useState("");
+
   const [icon, setIcon] = useState(<AiFillEyeInvisible size={"1.5em"} />);
   const [type, setType] = useState("password");
   const [username, setUser] = useState("");
@@ -14,6 +16,7 @@ export default function Home() {
     password: "",
     email: "",
     general: "",
+    passwordAgain:""
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -39,18 +42,33 @@ export default function Home() {
     );
   };
 
-  const handleLogin = async (e) => {
+  const handleCreate = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError({ username: "", password: "", email: "", general: "" });
+    setError({ username: "", password: "", email: "",passwordAgain:"", general: "" });
 
     if (!username) {
       setError((prev) => ({ ...prev, username: "This is a required field." }));
       setLoading(false);
       return;
     }
+    if (!(email)) {
+      setError((prev) => ({ ...prev, email: "This is required field" }));
+      setLoading(false);
+      return;
+    }
     if (!password) {
       setError((prev) => ({ ...prev, password: "This is a required field." }));
+      setLoading(false);
+      return;
+    }
+    if (!(password===password_again)) {
+      setError((prev) => ({ ...prev, passwordAgain: "Password Mismatch" }));
+      setLoading(false);
+      return;
+    }
+    if (!(password_again)) {
+      setError((prev) => ({ ...prev, password_again: "This is required field" }));
       setLoading(false);
       return;
     }
@@ -66,12 +84,17 @@ export default function Home() {
     }
 
     try {
-      const data = { username, password, email };
-      const response = await api.post("/login", data);
+      const data = { username, password, email,password_again };
+      const response = await api.post("/register", data);
 
-      if (response.status === 200) {
-        navigate("/dashboard");
+
+      
+
+      if (response.status === 201) {
+        navigate("/");
       } else {
+        console.log(response.status)
+        
         setError((prev) => ({ ...prev, general: "Invalid credentials." }));
       }
     } catch (err) {
@@ -102,13 +125,13 @@ export default function Home() {
       </div>
 
       <div className="flex justify-center items-center">
-        <div className="box w-[75vw] h-[50vh] md:w-[500px] md:h-[350px] bg-zinc-800 rounded-xl border-[0.5px] border-neutral-700 p-3 flex flex-col gap-4">
+        <div className="box w-[75vw] h-[50vh] md:w-[500px] md:h-[450px] bg-zinc-800 rounded-xl border-[0.5px] border-neutral-700 p-3 flex flex-col gap-4">
           <h3 className="ml-2 text-lg md:text-xl font-semibold font-mono">
-            Welcome Back
+            Create an Account
           </h3>
 
           <div className="form ml-2">
-            <form onSubmit={handleLogin} className="select-none">
+            <form onSubmit={handleCreate} className="select-none">
               <div className="username flex gap-2 items-center">
                 <span className="block text-zinc-400 my-1 mb-2 bg-zinc-800">
                   Username
@@ -179,16 +202,45 @@ export default function Home() {
                   {icon}
                 </span>
               </div>
+              <div className="password flex gap-2 items-center">
+                <span className="block text-zinc-400 my-1 mb-2 bg-zinc-800">
+                  Password Again
+                </span>
+                <span
+                  className={`block text-red-400 my-1 mb-2 font-normal text-sm ${
+                    error.passwordAgain ? "visible" : "invisible"
+                  }`}
+                >
+                  {error.passwordAgain}
+                </span>
+              </div>
+              <div className="password flex relative items-center">
+                <input
+                  className="text-zinc-400 w-full rounded-sm p-[2px] border-[0.5px] border-zinc-600 mb-2 select-none"
+                  type={type}
+                  name="password_again"
+                  placeholder="Enter your password"
+                  value={password_again}
+                  onChange={(e) => setPasswordAgain(e.target.value)}
+                />
+                <span
+                  className="flex items-center absolute right-2 top-0.5"
+                  onClick={handleEye}
+                >
+                  {icon}
+                </span>
+              </div>
 
               <button
                 type="submit"
                 className="bg-white text-zinc-800 px-3 py-1 w-full rounded-md hover:bg-white/50 transition-all duration-300 active:bg-white/30 disabled:opacity-50"
                 disabled={loading}
               >
-                {loading ? "Logging in..." : "Submit"}
+                {loading ? "Creating new user..." : "Submit"}
               </button>
             </form>
-            <a href="/create" className="underline text-blue-600">Dont Have an Account? Create One! </a>
+            <a href="/" className="underline text-blue-600">Have an Account? Login </a>
+
           </div>
         </div>
       </div>

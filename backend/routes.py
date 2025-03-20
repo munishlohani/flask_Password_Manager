@@ -1,6 +1,6 @@
 from models import Users, Password
 from flask_login import login_user, current_user, login_required, logout_user
-from flask import request, jsonify,redirect
+from flask import request, jsonify, redirect
 from encryption import encrypt_password, decrypt_password
 
 
@@ -54,7 +54,7 @@ def generate_routes(app, db):
 
             user = Users.query.filter(Users.username == username).first()
 
-            if user is not None :
+            if user is not None:
                 if user.check_password(password):
                     login_user(user)
                     print(current_user)
@@ -71,8 +71,6 @@ def generate_routes(app, db):
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        
-
 
     @app.route("/api/dashboard")
     @login_required
@@ -105,7 +103,6 @@ def generate_routes(app, db):
 
         except Exception as e:
             return jsonify({"error": "An error occoured"}), 400
-
 
     @app.route("/api/logout", methods=["POST"])
     @login_required
